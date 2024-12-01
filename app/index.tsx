@@ -20,8 +20,8 @@ export default function Index() {
       
       <View style={styles.cardContainer}>
         <TouchableOpacity style={styles.card}>
-        <Ionicons name="calendar" size={30} color="#0088cc" />
-          <Text style={styles.cardText}>Jadwal</Text>
+        <Ionicons name="accessibility-outline" size={30} color="#0088cc" />
+          <Text style={styles.cardText}>Siswa</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card}>
           <Ionicons name="newspaper-outline" size={30} color="#0088cc" />

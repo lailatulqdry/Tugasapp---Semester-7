@@ -11,6 +11,7 @@ const Jadwal = () => {
   };
 
   return (
+    <View style={styles.container}>
     <View style={styles.cardContainer}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateRow}>
         <TouchableOpacity
@@ -31,10 +32,39 @@ const Jadwal = () => {
         ))}
       </ScrollView>
     </View>
+    <View style={styles.baru}>
+        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
+        <Text style={styles.barulagi}>
+          {selectedDate === 'Mon'}
+        </Text>
+      </View>
+      <View style={styles.baru}>
+        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
+        <Text style={styles.barulagi}>
+          {selectedDate === 'Mon'}
+        </Text>
+      </View>
+      <View style={styles.baru}>
+        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
+        <Text style={styles.barulagi}>
+          {selectedDate === 'Mon'}
+        </Text>
+      </View>
+      <View style={styles.baru}>
+        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
+        <Text style={styles.barulagi}>
+          {selectedDate === 'Mon'}
+        </Text>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
+  },
   cardContainer: {
     width: width * 1, 
     height: 100, 
@@ -78,6 +108,26 @@ const styles = StyleSheet.create({
   hari: {
     fontSize: 18,
     color: 'black',
+  },
+  baru: {
+    marginTop: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    elevation: 3,
+    marginHorizontal: 20,
+  },
+  baruJudul: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  barulagi: {
+    fontSize: 16,
+    color: '#555',
   },
 });
 
