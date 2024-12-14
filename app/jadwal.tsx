@@ -1,134 +1,147 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {ActivityIndicator, Text, View, StyleSheet, TouchableOpacity, ScrollView,} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const { width } = Dimensions.get('window');
+export default function Jadwal() {
+  const [dataPost, setDataPost] = useState([]);
+  const [selectedDay, setSelectedDay] = useState('Senin');
 
-const Jadwal = () => {
-  const [selectedDate, setSelectedDate] = useState('Mon');
-
-  const handleDateSelect = (date) => {
-    setSelectedDate(date);
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://192.168.1.6:8000/api/jadwal');
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setDataPost(data);
+      } else if (data.data && Array.isArray(data.data)) {
+        setDataPost(data.data);
+      } else {
+        console.error('Data yang diterima bukan array:', data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const filteredData = dataPost.filter((post) => post.hari === selectedDay);
+
   return (
-    <View style={styles.container}>
-    <View style={styles.cardContainer}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateRow}>
-        <TouchableOpacity
-          onPress={() => handleDateSelect('Mon')}
-          style={[styles.dateContainer, selectedDate === 'Mon' && styles.selectedTanggal]}
-        >
-          <Text style={[styles.hari, selectedDate === 'Mon' && { color: 'black' }]}>Mon</Text>
-        </TouchableOpacity>
-        {['Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((date, index) => (
+    <ScrollView style={styles.container}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.namaHari}>
+        {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'].map((date, index) => (
           <TouchableOpacity
-            key={index}
-            onPress={() => handleDateSelect(date)}
-            style={[styles.dateContainer, selectedDate === date && styles.selectedTanggal]}
-          >
-            <Text style={[styles.day, selectedDate === date && { color: 'black' }]}>{date.split(' ')[0]}</Text>
-            <Text style={[styles.dayText, selectedDate === date && { color: 'black' }]}>{date.split(' ')[1]}</Text>
-          </TouchableOpacity>
+          key={index}
+          onPress={() => setSelectedDay(date)}
+          style={[
+            styles.HariContainer,
+            date === selectedDay && styles.selectedHariContainer,
+          ]}>
+          <Text
+            style={[
+              styles.hariText,
+              date === selectedDay && styles.selectedHariText,
+            ]}>
+            {date}
+          </Text>
+        </TouchableOpacity>
         ))}
       </ScrollView>
-    </View>
-    <View style={styles.baru}>
-        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
-        <Text style={styles.barulagi}>
-          {selectedDate === 'Mon'}
-        </Text>
+
+      {/* Tampilan Jadwal Hari */}
+      <View style={styles.JadwalContainer}>
+        <Text style={styles.JadwalHeader}>Jadwal {selectedDay}</Text>
+        {filteredData.length > 0 ? (
+          filteredData.map((post, key) => (
+            <View key={key} style={styles.JadwalCard}>
+              <View style={styles.JadwalDetails}>
+                <Text style={styles.JadwalHari}>{post.hari}</Text>
+                <Text style={styles.JadwalRuangan}>Ruangan: {post.ruangan}</Text>
+                <Text style={styles.JadwalRuangan}>
+                  Waktu: {post.jam_mulai} - {post.jam_selesai}
+                </Text>
+              </View>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noDataText}>
+            Tidak ada data jadwal untuk hari {selectedDay}.
+          </Text>
+        )}
       </View>
-      <View style={styles.baru}>
-        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
-        <Text style={styles.barulagi}>
-          {selectedDate === 'Mon'}
-        </Text>
-      </View>
-      <View style={styles.baru}>
-        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
-        <Text style={styles.barulagi}>
-          {selectedDate === 'Mon'}
-        </Text>
-      </View>
-      <View style={styles.baru}>
-        <Text style={styles.baruJudul}>Mata Pelajaran</Text>
-        <Text style={styles.barulagi}>
-          {selectedDate === 'Mon'}
-        </Text>
-      </View>
-    </View>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f7f7f7',
+    padding: 10,
   },
-  cardContainer: {
-    width: width * 1, 
-    height: 100, 
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 15,
-    alignSelf: 'center',
-    marginTop: 20,
-    marginLeft: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    elevation: 3,
-  },
-  dateRow: {
+  namaHari: {
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: 20,
   },
-  dateContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: width / 5, 
+  HariContainer: {
+    backgroundColor: '#f0f0f0',
     paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#f2f2ff',
+    paddingHorizontal: 15,
+    borderRadius: 15,
     marginHorizontal: 5,
   },
-  selectedTanggal: {
+  selectedHariContainer: {
     backgroundColor: 'dodgerblue',
-    borderRadius: 10,
-    paddingVertical: 15,
-    paddingHorizontal: 10,
   },
-  day: {
-    fontSize: 18,
+  hariText: {
+    fontSize: 16,
     color: '#333',
+    fontWeight: '600',
   },
-  dayText: {
-    fontSize: 14,
-    color: '#333',
+  selectedHariText: {
+    color: '#fff',
   },
-  hari: {
-    fontSize: 18,
-    color: 'black',
+  JadwalContainer: {
+    paddingHorizontal: 20,
   },
-  baru: {
-    marginTop: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    elevation: 3,
-    marginHorizontal: 20,
-  },
-  baruJudul: {
+  JadwalHeader: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10,
+    marginBottom: 15,
   },
-  barulagi: {
+  JadwalCard: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  JadwalDetails: {
+    marginLeft: 15,
+    flex: 1,
+  },
+  JadwalHari: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  JadwalRuangan: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 5,
+  },
+  noDataText: {
     fontSize: 16,
-    color: '#555',
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
-
-export default Jadwal;

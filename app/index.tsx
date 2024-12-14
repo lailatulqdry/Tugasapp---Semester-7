@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-nati
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import Home from './index';
+
 
 const { height, width } = Dimensions.get('window');  
 export default function Index() {
